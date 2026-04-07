@@ -43,10 +43,12 @@ export default function BalanceDetailPage(): React.JSX.Element {
   const firstName = name.split(' ')[0];
 
   const relatedExpenses = (expenses ?? []).filter((e) => {
+    const paidByMe = e.created_by === user?.id;
+    const paidByThem = e.created_by === userId;
+    if (!paidByMe && !paidByThem) return false;
     const participantIds = e.participants.map((p) => p.user_id);
-    const involvesMe = e.created_by === user?.id || participantIds.includes(user?.id ?? '');
-    const involvesThem = e.created_by === userId || participantIds.includes(userId);
-    return involvesMe && involvesThem;
+    if (paidByMe) return participantIds.includes(userId);
+    return participantIds.includes(user?.id ?? '');
   });
 
   const relatedCollections = (collections ?? []).filter(
@@ -111,16 +113,19 @@ export default function BalanceDetailPage(): React.JSX.Element {
               const myShare = expense.participants.find((p) => p.user_id === user?.id)?.share_amount ?? 0;
               const theirShare = expense.participants.find((p) => p.user_id === userId)?.share_amount ?? 0;
               const iPaid = expense.created_by === user?.id;
+              const paidByName = iPaid
+                ? 'you'
+                : expense.creator?.full_name?.split(' ')[0] ?? firstName;
 
               return (
                 <Card key={expense.id} className="p-3.5 mb-2">
                   <div className="flex items-center justify-between">
                     <div className="flex-1 mr-3">
                       <p className="text-white font-medium text-sm truncate">
-                        {expense.description ?? 'Expense'}
+                        {expense.description || 'Expense'}
                       </p>
                       <p className="text-slate-500 text-xs mt-0.5">
-                        {format(new Date(expense.expense_date), 'MMM d')} · Paid by {iPaid ? 'you' : firstName}
+                        {format(new Date(expense.expense_date), 'MMM d')} · Paid by {paidByName}
                       </p>
                     </div>
                     <div className="text-right">
