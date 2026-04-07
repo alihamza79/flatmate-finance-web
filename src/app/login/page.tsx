@@ -15,13 +15,6 @@ const loginSchema = z.object({
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
-const QUICK_LOGINS = [
-  { name: 'Husnain', email: 'husnain.ashfaq3939@gmail.com', emoji: '👨' },
-  { name: 'Noman', email: 'nomiahmed307@gmail.com', emoji: '👨‍💻' },
-  { name: 'Ali', email: 'hamzachaudhay79@gmail.com', emoji: '🧑' },
-  { name: 'Abdullah', email: 'mabdkhanniazi@gmail.com', emoji: '👦' },
-];
-
 export default function LoginPage(): React.JSX.Element {
   const { signIn } = useAuth();
   const router = useRouter();
@@ -29,7 +22,6 @@ export default function LoginPage(): React.JSX.Element {
   const {
     control,
     handleSubmit,
-    setValue,
     setError,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormData>({
@@ -57,27 +49,6 @@ export default function LoginPage(): React.JSX.Element {
           <p className="text-slate-400 mt-2">
             Track shared & personal expenses together
           </p>
-        </div>
-
-        <div className="mb-6">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
-            Quick Login
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {QUICK_LOGINS.map((u) => (
-              <button
-                key={u.email}
-                onClick={() => {
-                  setValue('email', u.email);
-                  setValue('password', 'Flatmate@123');
-                }}
-                className="bg-bg-card border border-slate-700 rounded-xl px-4 py-2.5 flex items-center hover:border-slate-500 transition-colors cursor-pointer"
-              >
-                <span className="text-base mr-2">{u.emoji}</span>
-                <span className="text-sm font-medium text-slate-300">{u.name}</span>
-              </button>
-            ))}
-          </div>
         </div>
 
         <div className="bg-bg-card rounded-3xl p-6 border border-slate-700/50">
@@ -131,10 +102,6 @@ export default function LoginPage(): React.JSX.Element {
             size="lg"
           />
         </div>
-
-        <p className="text-center text-xs text-slate-500 mt-6">
-          Password for all accounts: Flatmate@123
-        </p>
       </div>
     </div>
   );
