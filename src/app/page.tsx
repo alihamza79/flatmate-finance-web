@@ -9,6 +9,15 @@ export default function HomePage(): React.JSX.Element {
   const router = useRouter();
 
   useEffect(() => {
+    // Check for Supabase recovery hash BEFORE doing the normal auth redirect.
+    // Supabase emails link to the Site URL (/) with #access_token=...&type=recovery
+    const hash = window.location.hash;
+    if (hash && hash.includes('type=recovery')) {
+      // Preserve the full hash so reset-password page can exchange the token
+      router.replace(`/reset-password${hash}`);
+      return;
+    }
+
     if (!isLoading) {
       if (session) {
         router.replace('/group');
